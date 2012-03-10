@@ -1,6 +1,10 @@
 *target/*
 *bin/*
+*derbyDB/*
+
 .DS_Store
 .classpath
 .project
 .wtpmodules
+
+*.log
