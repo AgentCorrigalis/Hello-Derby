@@ -7,6 +7,8 @@ import org.junit.Test;
 
 public class FirstQuickTest {
 
+	// comment
+	
 	@Test
 	public void testString() {
 		assertTrue("Hello".equals(FirstClass.hello()));
