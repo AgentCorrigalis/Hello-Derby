@@ -15,17 +15,17 @@ public class Database {
 	private static Database database = null;
 	private Connection connection;
 	
-	private static Connection getConnection() throws SQLException {
+	private static Statement newStatement() throws SQLException {
 		if (database == null) {
 			database = new Database();
 		}
-		return database.connection;
+		return database.connection.createStatement();
 	}
 	
+	
 	public static boolean tableExists(String tableName) throws SQLException {
-		Statement statement = getConnection().createStatement();
 		try {
-			statement.executeQuery("SELECT * FROM " + tableName);
+			executeSelectQuery("SELECT * FROM " + tableName);
 		} catch (SQLSyntaxErrorException e) {
 			if (e.getMessage().equals("Table/View '" + tableName + "' does not exist.")) {
 				return false;
@@ -36,11 +36,22 @@ public class Database {
 		return true;
 	}
 	
-	public static void createTable(String tableName) {
-		Statement statement = getConnection().createStatement();
-		statement.executeUpdate(arg0);
+	public static void createTable(CreateTableQuery createTableQuery) throws IllegalArgumentException, SQLException {
+		executeUpdateQuery(createTableQuery.build());
 	}
 	
+	public static void dropTable(String tableName) throws SQLException {
+		executeUpdateQuery("DROP TABLE " + tableName);
+	}
+	
+	private static void executeUpdateQuery(String query) throws SQLException {
+		newStatement().executeUpdate(query);
+	}
+	
+	private static void executeSelectQuery(String query) throws SQLException {
+		newStatement().executeQuery(query);
+	}
+
 	private Database() throws SQLException {
 		loadDriver();
 		setConnection();
@@ -63,5 +74,6 @@ public class Database {
 		connection = DriverManager.getConnection(PROTOCOL + DB_NAME + ";create=true", props);
 		connection.setAutoCommit(true);
 	}
+
 	
 }
